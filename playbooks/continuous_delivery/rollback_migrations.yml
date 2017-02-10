@@ -1,9 +1,9 @@
 # This playbook will check for migrations to rollback for Django applications within a larger
-# Django application. The provided input file will determine what migrations should be rolled back.
+# Django project. The provided input file will determine what migrations should be rolled back.
 #
 # The playbook uses the Django management commands found in this Django app repo:
 # https://github.com/edx/edx-django-release-util
-# So the Django app above needs to be installed in the Django app.
+# So the Django app above needs to be installed in the Django project.
 #
 # Required variables for this playbook:
 #
@@ -26,10 +26,21 @@
 #   - HIPCHAT_URL                     - URL of the hipchat API  (defaults to v1 of the api)
 #
 # Example command line to run this playbook:
-#    ansible-playbook -vvvv -i "localhost," -c local \
-#       -e @overrides.yml \
-#       run_migrations.yml
-#
+#    ansible-playbook \
+#    -vvvv \
+#    -i ../{artifact_path}/ansible_inventory \
+#    --private-key=$PRIVATE_KEY \
+#    --module-path=playbooks/library \
+#    --user=ubuntu \
+#    -e APPLICATION_PATH=$APPLICATION_PATH \
+#    -e APPLICATION_NAME=$APPLICATION_NAME \
+#    -e APPLICATION_USER=$APPLICATION_USER \
+#    -e ARTIFACT_PATH=`/bin/pwd`/../{artifact_path}/migrations \
+#    -e DB_MIGRATION_USER=$DB_MIGRATION_USER \
+#    -e DB_MIGRATION_PASS=$DB_MIGRATION_PASS \
+#    -e ../{artifact_path}/migration_input_file \
+#    -e SUB_APPLICATION_NAME={sub_application_name} \
+#    playbooks/continuous_delivery/rollback_migrations.yml
 
 - hosts: all
   gather_facts: false
@@ -70,7 +81,7 @@
         --output_file '{{ temp_output_dir.stdout }}/{{ database }}_{{ original_state }}'
         --settings '{{ EDX_PLATFORM_SETTINGS }}'
       become_user: "{{ APPLICATION_USER }}"
-      when: APPLICATION_NAME == "edxapp" and item != "read_replica"
+      when: APPLICATION_NAME == "edxapp"
 
     - name: migrate to original versions
       shell: >
@@ -105,7 +116,7 @@
         --output_file '{{ temp_output_dir.stdout }}/{{ database }}_{{ migration_result }}'
         --settings '{{ EDX_PLATFORM_SETTINGS }}'
       become_user: "{{ APPLICATION_USER }}"
-      when: APPLICATION_NAME == "edxapp" and item != "read_replica"
+      when: APPLICATION_NAME == "edxapp"
 
     - name: List all migration files
       action: "command ls -1 {{ temp_output_dir.stdout }}"
