@@ -77,8 +77,7 @@
     backup: yes
     dest: /etc/default/jenkins
     regexp: '^JAVA_ARGS='
-
-    line: 'JAVA_ARGS=\"{{ jenkins_jvm_args }}\"'
+    line: 'JAVA_ARGS="{{ jenkins_jvm_args }}"'
   tags:
     - java
     - jenkins
@@ -90,7 +89,7 @@
     backup: yes
     dest: /etc/default/jenkins
     regexp: '^JENKINS_HOME='
-    line: 'JENKINS_HOME=\"{{ jenkins_home }}\"'
+    line: 'JENKINS_HOME="{{ jenkins_home }}"'
   tags:
     - java
     - jenkins
