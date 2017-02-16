@@ -47,14 +47,11 @@
   become: true
 
   vars:
-    COMMAND_PREFIX: >
-      . {{ APPLICATION_PATH }}/{{ APPLICATION_NAME }}_env;
-      DB_MIGRATION_USER={{ DB_MIGRATION_USER }} DB_MIGRATION_PASS={{ DB_MIGRATION_PASS }}
-      /edx/bin/python.{{ APPLICATION_NAME }} /edx/bin/manage.{{ APPLICATION_NAME }}"
-    
+    COMMAND_PREFIX: ". {{ APPLICATION_PATH }}/{{ APPLICATION_NAME }}_env; DB_MIGRATION_USER={{ DB_MIGRATION_USER }} DB_MIGRATION_PASS={{ DB_MIGRATION_PASS }} /edx/bin/python.{{ APPLICATION_NAME }} /edx/bin/manage.{{ APPLICATION_NAME }} "
     EDX_PLATFORM_SETTINGS: "aws"
     rollback_result: rollback_result.yml
     original_state: original_state.yml
+    migration_plan: migration_plan.yml
     migration_result: migration_result.yml
     database: default
 
@@ -86,20 +83,20 @@
     - name: migrate to original versions
       shell: >
         {{ COMMAND_PREFIX }} run_specific_migrations
-        --migration '{{ item[0] }}' '{{ item[1] }}'
+        --migration '{{ item.app }}' '{{ item.migration }}'
         --output_file '{{ temp_output_dir.stdout }}/{{ migration_plan }}'
       become_user: "{{ APPLICATION_USER }}"
-      with_items: initial_states
+      with_items: "{{ initial_states }}"
       when: APPLICATION_NAME != "edxapp"
 
     - name: migrate to original versions for edxapp
       shell: >
         {{ COMMAND_PREFIX }} {{ SUB_APPLICATION_NAME }} run_specific_migrations
-        --migration '{{ item[0] }}' '{{ item[1] }}'
+        --migration '{{ item.app }}' '{{ item.migration }}'
         --output_file '{{ temp_output_dir.stdout }}/{{ database }}_{{ migration_plan }}'
         --database '{{ database }}'
       become_user: "{{ APPLICATION_USER }}"
-      with_items: initial_states
+      with_items: "{{ initial_states }}"
       when: APPLICATION_NAME == "edxapp"
 
     - name: generate post rollback migration state
