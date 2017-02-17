@@ -48,7 +48,7 @@ PYTHON_BIN="${VIRTUAL_ENV}/bin"
 ANSIBLE_DIR="/tmp/ansible"
 CONFIGURATION_DIR="/tmp/configuration"
 EDX_PPA="deb http://ppa.edx.org precise main"
-EDX_PPA_KEY_SERVER="keyserver.ubuntu.com"
+EDX_PPA_KEY_SERVER="hkp://keyserver.ubuntu.com:80"
 EDX_PPA_KEY_ID="B41E5E3969464050"
 
 cat << EOF
@@ -107,7 +107,7 @@ apt-get install -y software-properties-common python-software-properties
 # Add git PPA
 add-apt-repository -y ppa:git-core/ppa
 
-# For older software we need to install our own PPA.
+vi a    # For older software we need to install our own PPA.
 apt-key adv --keyserver "${EDX_PPA_KEY_SERVER}" --recv-keys "${EDX_PPA_KEY_ID}"
 add-apt-repository -y "${EDX_PPA}"
 
