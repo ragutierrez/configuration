@@ -16,7 +16,7 @@ mongo_user: mongodb
 
 MONGODB_REPO: "deb http://repo.mongodb.org/apt/ubuntu precise/mongodb-org/3.0 multiverse"
 MONGODB_APT_KEY: "7F0CEB10"
-MONGODB_APT_KEYSERVER: "keyserver.ubuntu.com"
+MONGODB_APT_KEYSERVER: "hkp://keyserver.ubuntu.com:80"
 
 mongodb_debian_pkgs:
   - "mongodb-org={{ mongo_version }}"
