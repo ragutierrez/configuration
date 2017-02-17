@@ -31,7 +31,7 @@ gpg_fingerprint="58118E89F3A912897C070ADBF76221572C52609D"
 key_servers="
 ha.pool.sks-keyservers.net
 pgp.mit.edu
-keyserver.ubuntu.com
+hkp://keyserver.ubuntu.com:80
 "
 
 command_exists() {
